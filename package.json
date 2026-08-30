@@ -1,0 +1,11 @@
+{
+  "name": "diabete-gestazionale",
+  "private": true,
+  "scripts": {
+    "build:css": "tailwindcss -i resources/app.css -o public/assets/css/app.css --minify",
+    "watch:css": "tailwindcss -i resources/app.css -o public/assets/css/app.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}
