@@ -6,6 +6,9 @@ use CodeIgniter\Model;
 
 class UserModel extends Model
 {
+    public const RUOLO_AMMINISTRATORE = 'amministratore';
+    public const RUOLO_UTENTE         = 'utente';
+
     protected $table         = 'users';
     protected $primaryKey    = 'id';
     protected $returnType    = 'array';
@@ -13,8 +16,20 @@ class UserModel extends Model
     protected $allowedFields = [
         'email', 'password_hash', 'nome', 'data_presunta_parto',
         'soglia_digiuno', 'soglia_post_1h', 'soglia_post_2h',
-        'intestazione', 'mostra_tutte_colonne', 'attivo', 'ultimo_accesso',
+        'intestazione', 'mostra_tutte_colonne', 'attivo', 'ruolo', 'ultimo_accesso',
     ];
+
+    /** @param array<string, mixed>|null $user */
+    public static function eAmministratore(?array $user): bool
+    {
+        return ($user['ruolo'] ?? null) === self::RUOLO_AMMINISTRATORE;
+    }
+
+    /** @return list<array<string, mixed>> */
+    public function elenco(): array
+    {
+        return $this->orderBy('attivo', 'DESC')->orderBy('nome', 'ASC')->findAll();
+    }
 
     /** @return array<string, mixed>|null */
     public function findByEmail(string $email): ?array

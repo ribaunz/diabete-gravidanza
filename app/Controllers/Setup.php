@@ -38,6 +38,8 @@ class Setup extends BaseController
             'nome'                => $this->request->getPost('nome'),
             'email'               => $this->request->getPost('email'),
             'data_presunta_parto' => $this->request->getPost('data_presunta_parto') ?: null,
+            // Chi installa amministra: e l'unico modo per creare gli altri account.
+            'ruolo'               => UserModel::RUOLO_AMMINISTRATORE,
         ], (string) $this->request->getPost('password'));
 
         service('auth')->login($userId);

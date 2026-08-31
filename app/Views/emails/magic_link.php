@@ -4,9 +4,10 @@
  * @var string $link
  * @var string $codice
  * @var string $scopo
- * @var int    $durata
+ * @var string $validita
  */
-$reset = $scopo === 'reset';
+$invito = $scopo === 'invito';
+$reset  = $scopo === 'reset' || $invito;
 ?>
 <!DOCTYPE html>
 <html lang="it">
@@ -16,7 +17,7 @@ $reset = $scopo === 'reset';
         <tr><td>
             <p style="margin:0 0 4px;font-size:13px;color:#0d9488;font-weight:bold;">Diario glicemie</p>
             <h1 style="margin:0 0 16px;font-size:20px;">
-                <?= $reset ? 'Reimposta la tua password' : 'Conferma il tuo accesso' ?>
+                <?= $invito ? 'Benvenuta nel diario' : ($reset ? 'Reimposta la tua password' : 'Conferma il tuo accesso') ?>
             </h1>
 
             <p style="margin:0 0 16px;font-size:15px;line-height:1.5;">
@@ -29,7 +30,7 @@ $reset = $scopo === 'reset';
             <p style="margin:0 0 20px;">
                 <a href="<?= esc($link, 'attr') ?>"
                    style="display:inline-block;background:#0d9488;color:#ffffff;text-decoration:none;padding:12px 22px;border-radius:12px;font-weight:bold;font-size:15px;">
-                    <?= $reset ? 'Scegli una nuova password' : 'Entra nel diario' ?>
+                    <?= $invito ? 'Scegli la tua password' : ($reset ? 'Scegli una nuova password' : 'Entra nel diario') ?>
                 </a>
             </p>
 
@@ -41,7 +42,7 @@ $reset = $scopo === 'reset';
             <?php endif; ?>
 
             <p style="margin:0 0 8px;font-size:13px;color:#6b7280;">
-                Il link vale <?= (int) $durata ?> minuti e può essere usato una sola volta.
+                Il link vale <?= esc($validita) ?> e può essere usato una sola volta.
             </p>
             <p style="margin:0;font-size:13px;color:#6b7280;">
                 Se non hai richiesto tu questo messaggio puoi ignorarlo: senza il link nessuno può entrare.

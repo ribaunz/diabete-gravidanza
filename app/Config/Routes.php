@@ -50,3 +50,13 @@ $routes->group('', ['filter' => 'auth'], static function ($routes): void {
     $routes->post('impostazioni/password', 'Impostazioni::cambiaPassword');
     $routes->post('impostazioni/dispositivi/(:num)/revoca', 'Impostazioni::revocaDispositivo/$1');
 });
+
+// --- Gestione utenti (solo amministratori) ----------------------------------
+$routes->group('utenti', ['filter' => 'admin'], static function ($routes): void {
+    $routes->get('/', 'Utenti::index');
+    $routes->get('nuovo', 'Utenti::nuovo');
+    $routes->post('nuovo', 'Utenti::crea');
+    $routes->post('(:num)/invito', 'Utenti::rinviaInvito/$1');
+    $routes->post('(:num)/ruolo', 'Utenti::cambiaRuolo/$1');
+    $routes->post('(:num)/stato', 'Utenti::cambiaStato/$1');
+});

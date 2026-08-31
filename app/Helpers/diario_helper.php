@@ -291,3 +291,15 @@ if (! function_exists('data_estesa')) {
         );
     }
 }
+
+if (! function_exists('e_amministratore')) {
+    /**
+     * Vero se l'utente può gestire gli account degli altri.
+     *
+     * @param array<string, mixed>|null $utente
+     */
+    function e_amministratore(?array $utente): bool
+    {
+        return App\Models\UserModel::eAmministratore($utente);
+    }
+}

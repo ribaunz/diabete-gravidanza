@@ -10,6 +10,11 @@ $voci = [
     ['url' => '/impostazioni', 'etichetta' => 'Impostazioni', 'icona' => '⚙️', 'attivo' => ['impostazioni']],
 ];
 
+// La gestione utenti compare solo a chi puo usarla.
+if (e_amministratore($utente)) {
+    $voci[] = ['url' => '/utenti', 'etichetta' => 'Utenti', 'icona' => '👥', 'attivo' => ['utenti']];
+}
+
 $primoSegmento = service('uri')->getSegment(1);
 $eAttivo       = static fn (array $voce): bool => in_array($primoSegmento, $voce['attivo'], true);
 ?>
@@ -55,7 +60,7 @@ $eAttivo       = static fn (array $voce): bool => in_array($primoSegmento, $voce
     </main>
 
     <nav class="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
-        <div class="grid grid-cols-5">
+        <div class="grid" style="grid-template-columns: repeat(<?= count($voci) ?>, minmax(0, 1fr));">
             <?php foreach ($voci as $voce): ?>
                 <a href="<?= site_url(ltrim($voce['url'], '/')) ?>"
                    class="flex flex-col items-center gap-0.5 py-2 text-[11px] font-medium <?= $eAttivo($voce) ? 'text-verde-700' : 'text-slate-500' ?>">

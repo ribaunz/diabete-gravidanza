@@ -25,7 +25,7 @@ class Auth extends BaseController
     public function attemptLogin()
     {
         $throttler = service('throttler');
-        $chiave    = 'accesso-' . $this->request->getIPAddress();
+        $chiave    = $this->chiaveThrottler('accesso');
 
         if ($throttler->check($chiave, 10, MINUTE) === false) {
             return redirect()->back()->withInput()->with('errore', 'Troppi tentativi di accesso. Riprova tra un minuto.');
@@ -100,7 +100,7 @@ class Auth extends BaseController
 
         $throttler = service('throttler');
 
-        if ($throttler->check('verifica-' . $this->request->getIPAddress(), 15, MINUTE) === false) {
+        if ($throttler->check($this->chiaveThrottler('verifica'), 15, MINUTE) === false) {
             return redirect()->back()->with('errore', 'Troppi tentativi. Attendi un minuto.');
         }
 
@@ -135,7 +135,7 @@ class Auth extends BaseController
             return redirect()->to('/accedi');
         }
 
-        if (service('throttler')->check('rinvio-' . $this->request->getIPAddress(), 3, MINUTE) === false) {
+        if (service('throttler')->check($this->chiaveThrottler('rinvio'), 3, MINUTE) === false) {
             return redirect()->back()->with('errore', 'Hai già richiesto un nuovo link da poco. Attendi un minuto.');
         }
 
@@ -169,7 +169,7 @@ class Auth extends BaseController
             return redirect()->back()->withInput()->with('errori', $this->validator->getErrors());
         }
 
-        if (service('throttler')->check('recupero-' . $this->request->getIPAddress(), 5, 10 * MINUTE) === false) {
+        if (service('throttler')->check($this->chiaveThrottler('recupero'), 5, 10 * MINUTE) === false) {
             return redirect()->back()->with('errore', 'Troppe richieste. Riprova più tardi.');
         }
 
@@ -193,16 +193,21 @@ class Auth extends BaseController
 
     public function resetForm(string $token)
     {
-        if (service('magicLink')->verifyToken($token, AuthTokenModel::SCOPO_RESET) === null) {
+        $riga = $this->tokenPassword($token);
+
+        if ($riga === null) {
             return redirect()->to('/accedi')->with('errore', 'Link non valido o scaduto.');
         }
 
-        return view('auth/reimposta', ['token' => $token]);
+        return view('auth/reimposta', [
+            'token'  => $token,
+            'invito' => $riga['scopo'] === AuthTokenModel::SCOPO_INVITO,
+        ]);
     }
 
     public function resetPassword(string $token)
     {
-        $riga = service('magicLink')->verifyToken($token, AuthTokenModel::SCOPO_RESET);
+        $riga = $this->tokenPassword($token);
 
         if ($riga === null) {
             return redirect()->to('/accedi')->with('errore', 'Link non valido o scaduto.');
@@ -230,6 +235,37 @@ class Auth extends BaseController
         return redirect()->to('/accedi')->with('successo', 'Sei uscita dal diario.');
     }
 
+    /**
+     * Token che autorizza a scegliere una password: vale sia il recupero sia
+     * l'invito con cui un amministratore apre un nuovo account.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function tokenPassword(string $token): ?array
+    {
+        foreach ([AuthTokenModel::SCOPO_RESET, AuthTokenModel::SCOPO_INVITO] as $scopo) {
+            $riga = service('magicLink')->verifyToken($token, $scopo);
+
+            if ($riga !== null) {
+                return $riga;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Chiave per il conteggio dei tentativi.
+     *
+     * L'indirizzo IP non puo finire grezzo nella chiave: la cache di CodeIgniter
+     * rifiuta i due punti e ogni indirizzo IPv6 ne contiene, quindi il controllo
+     * andava in errore invece di limitare. Un hash breve distingue i chiamanti
+     * senza usare caratteri vietati.
+     */
+    private function chiaveThrottler(string $prefisso): string
+    {
+        return $prefisso . '-' . substr(hash('sha256', $this->request->getIPAddress()), 0, 32);
+    }
     private function completa(int $userId, int $tokenId, bool $ricorda)
     {
         $auth = service('auth');

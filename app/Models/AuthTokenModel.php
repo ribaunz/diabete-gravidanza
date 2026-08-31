@@ -9,6 +9,9 @@ class AuthTokenModel extends Model
     public const SCOPO_LOGIN = 'login';
     public const SCOPO_RESET = 'reset';
 
+    /** Primo accesso di un account creato da un amministratore. */
+    public const SCOPO_INVITO = 'invito';
+
     protected $table         = 'auth_tokens';
     protected $primaryKey    = 'id';
     protected $returnType    = 'array';

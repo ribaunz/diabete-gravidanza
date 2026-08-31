@@ -13,6 +13,12 @@ class MagicLink
 {
     public const DURATA_MINUTI = 15;
 
+    /**
+     * L'invito viaggia per email e la destinataria puo aprirlo con calma:
+     * quindici minuti lo renderebbero inutilizzabile.
+     */
+    public const DURATA_INVITO_MINUTI = 7 * 24 * 60;
+
     private AuthTokenModel $tokens;
 
     public function __construct()
@@ -36,6 +42,7 @@ class MagicLink
         $codice = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
         $request = service('request');
+        $durata  = $this->durataMinuti($scopo);
 
         $tokenId = (int) $this->tokens->insert([
             'user_id'     => $userId,
@@ -44,14 +51,16 @@ class MagicLink
             'codice_hash' => hash('sha256', $codice),
             'ip'          => $request->getIPAddress(),
             'user_agent'  => mb_substr((string) $request->getUserAgent(), 0, 255),
-            'scade_il'    => date('Y-m-d H:i:s', strtotime('+' . self::DURATA_MINUTI . ' minutes')),
+            'scade_il'    => date('Y-m-d H:i:s', strtotime('+' . $durata . ' minutes')),
         ], true);
 
-        $link = $scopo === AuthTokenModel::SCOPO_RESET
+        // Invito e reimpostazione portano allo stesso modulo: in entrambi i casi
+        // si tratta di scegliere una password.
+        $link = in_array($scopo, [AuthTokenModel::SCOPO_RESET, AuthTokenModel::SCOPO_INVITO], true)
             ? site_url('password/reimposta/' . $token)
             : site_url('accedi/link/' . $token);
 
-        $this->deliver($user, $link, $codice, $scopo);
+        $this->deliver($user, $link, $codice, $scopo, $durata);
 
         return ['token_id' => $tokenId, 'link' => $link, 'codice' => $codice];
     }
@@ -97,19 +106,21 @@ class MagicLink
      *
      * @param array<string, mixed> $user
      */
-    private function deliver(array $user, string $link, string $codice, string $scopo): void
+    private function deliver(array $user, string $link, string $codice, string $scopo, int $durata): void
     {
         $html = view('emails/magic_link', [
-            'nome'   => $user['nome'] ?: 'ciao',
-            'link'   => $link,
-            'codice' => $codice,
-            'scopo'  => $scopo,
-            'durata' => self::DURATA_MINUTI,
+            'nome'     => $user['nome'] ?: 'ciao',
+            'link'     => $link,
+            'codice'   => $codice,
+            'scopo'    => $scopo,
+            'validita' => $this->validita($durata),
         ]);
 
-        $oggetto = $scopo === AuthTokenModel::SCOPO_RESET
-            ? 'Reimposta la password del diario glicemie'
-            : 'Il tuo codice di accesso al diario glicemie';
+        $oggetto = match ($scopo) {
+            AuthTokenModel::SCOPO_INVITO => 'Attiva il tuo diario glicemie',
+            AuthTokenModel::SCOPO_RESET  => 'Reimposta la password del diario glicemie',
+            default                      => 'Il tuo codice di accesso al diario glicemie',
+        };
 
         if (env('email.disabilitata') === true || env('email.disabilitata') === 'true') {
             $this->saveToDisk($user['email'], $oggetto, $html);
@@ -131,6 +142,31 @@ class MagicLink
                 throw new RuntimeException("Non è stato possibile inviare l'email. Riprova più tardi.");
             }
         }
+    }
+
+    private function durataMinuti(string $scopo): int
+    {
+        return $scopo === AuthTokenModel::SCOPO_INVITO
+            ? self::DURATA_INVITO_MINUTI
+            : self::DURATA_MINUTI;
+    }
+
+    /** Durata in parole, per il testo dell'email. */
+    private function validita(int $minuti): string
+    {
+        if ($minuti < 60) {
+            return $minuti . ' minuti';
+        }
+
+        if ($minuti < 1440) {
+            $ore = intdiv($minuti, 60);
+
+            return $ore === 1 ? "un'ora" : $ore . ' ore';
+        }
+
+        $giorni = intdiv($minuti, 1440);
+
+        return $giorni === 1 ? 'un giorno' : $giorni . ' giorni';
     }
 
     private function saveToDisk(string $destinatario, string $oggetto, string $html): void
