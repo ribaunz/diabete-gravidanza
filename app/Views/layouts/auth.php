@@ -7,7 +7,7 @@
     <title><?= esc($titolo ?? 'Diario glicemie') ?></title>
     <link rel="manifest" href="<?= base_url('manifest.webmanifest') ?>">
     <link rel="icon" href="<?= base_url('assets/img/icona.svg') ?>" type="image/svg+xml">
-    <link rel="stylesheet" href="<?= base_url('assets/css/app.css') ?>">
+    <link rel="stylesheet" href="<?= asset_versionato('assets/css/app.css') ?>">
 </head>
 <body class="min-h-screen bg-gradient-to-b from-verde-50 via-sabbia-50 to-sabbia-100">
     <main class="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-4 py-10">

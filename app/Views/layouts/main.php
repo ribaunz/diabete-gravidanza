@@ -28,7 +28,7 @@ $eAttivo       = static fn (array $voce): bool => in_array($primoSegmento, $voce
     <link rel="manifest" href="<?= base_url('manifest.webmanifest') ?>">
     <link rel="icon" href="<?= base_url('assets/img/icona.svg') ?>" type="image/svg+xml">
     <link rel="apple-touch-icon" href="<?= base_url('assets/img/icona.svg') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/css/app.css') ?>">
+    <link rel="stylesheet" href="<?= asset_versionato('assets/css/app.css') ?>">
 </head>
 <body class="min-h-screen pb-20 md:pb-0">
     <header class="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur">

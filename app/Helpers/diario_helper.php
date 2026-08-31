@@ -303,3 +303,21 @@ if (! function_exists('e_amministratore')) {
         return App\Models\UserModel::eAmministratore($utente);
     }
 }
+
+if (! function_exists('asset_versionato')) {
+    /**
+     * URL di un file statico con la data di modifica in coda.
+     *
+     * Davanti al sito c'è Cloudflare, che tiene in cache i file statici per ore:
+     * senza il suffisso, dopo un aggiornamento continuerebbe a servire il foglio
+     * di stile vecchio. Cambiando l'indirizzo a ogni build la cache non lo
+     * intercetta e non serve svuotarla a mano.
+     */
+    function asset_versionato(string $percorso): string
+    {
+        $file = FCPATH . ltrim($percorso, '/');
+        $url  = base_url($percorso);
+
+        return is_file($file) ? $url . '?v=' . filemtime($file) : $url;
+    }
+}
