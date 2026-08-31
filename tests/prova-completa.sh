@@ -29,11 +29,12 @@ verifica "account creato ed entrata nel diario" "Account creato"
 echo "2) Inserimento misurazioni"
 OGGI=$(date +%F)
 codice "$(get /giorno/$OGGI)" 200 "vista giornata"
-codice "$(post /giorno/$OGGI "diario_csrf=$(tok)&valore_testo[chetonuria]=assente&valore[digiuno]=82&ora[digiuno]=07:30&nota[digiuno]=notte tranquilla&valore[colazione_1h]=145&nota[colazione_1h]=fette biscottate e marmellata&valore[pranzo_1h]=118&valore[cena_1h]=126&nota_giornata=camminata di 30 minuti&peso=68,4")" 200 "salvataggio giornata"
+codice "$(post /giorno/$OGGI "diario_csrf=$(tok)&valore[digiuno]=82&ora[digiuno]=07:30&nota[digiuno]=notte tranquilla&valore[colazione_1h]=145&nota[colazione_1h]=fette biscottate e marmellata&valore[pranzo_1h]=118&valore[pranzo_2h]=112&nota[pranzo_2h]=pasta integrale&valore[cena_1h]=126&nota_giornata=camminata di 30 minuti&peso=68,4")" 200 "salvataggio giornata"
 verifica "conferma di salvataggio" "Misurazioni salvate"
 verifica "valore rileggibile nel modulo" 'value="82"'
 verifica "nota rileggibile" "notte tranquilla"
 verifica "valore fuori soglia segnalato" "sopra soglia"
+verifica "controllo a 2 ore registrato" 'value="112"'
 
 echo "3) Validazione"
 codice "$(post /giorno/$OGGI "diario_csrf=$(tok)&valore[digiuno]=900")" 200 "valore assurdo rifiutato"

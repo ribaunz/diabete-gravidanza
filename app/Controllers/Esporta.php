@@ -66,7 +66,7 @@ class Esporta extends BaseController
                     $data,
                     slot_label($slot),
                     $riga['ora'] !== null ? substr((string) $riga['ora'], 0, 5) : '',
-                    format_value($slot, $riga['valore'], $riga['valore_testo']),
+                    format_value($riga['valore']),
                     $meta['unit'],
                     value_status($slot, $riga['valore'], $this->utente),
                     (string) ($riga['nota'] ?? ''),

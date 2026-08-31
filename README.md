@@ -11,10 +11,12 @@ esportare il tutto in PDF — identico al modulo cartaceo, oppure nella versione
 
 ## Che cosa fa
 
-**Registrazione giornaliera** — una scheda per ogni giorno con le misurazioni previste dal modulo:
-chetonuria, glicemia a digiuno (< 90), 1 ora dopo colazione, dopo pranzo e dopo cena (< 130).
-Le colonne barrate della scheda cartacea (unità di insulina, controlli a 2 ore, prima dei pasti)
-sono disponibili con "Mostra anche insulina e altri controlli" o attivandole nelle impostazioni.
+**Registrazione giornaliera** — una scheda per ogni giorno con le glicemie del modulo: a digiuno
+(< 90), 1 ora dopo colazione, dopo pranzo e dopo cena (< 130), più il controllo facoltativo a 2 ore
+dopo ogni pasto (< 120), sempre disponibile quando serve. Unità di insulina e glicemie prima dei
+pasti compaiono con "Mostra anche insulina e glicemie prima dei pasti" o attivandole nelle
+impostazioni. La chetonuria non viene raccolta: la sua colonna resta stampata sul PDF, vuota, da
+compilare a mano.
 
 **Una nota per ogni misurazione** — accanto a ogni valore si può annotare cosa si è mangiato, come
 ci si sentiva, l'attività fisica. In più c'è una nota generale della giornata e il peso.
@@ -104,7 +106,7 @@ app/
   Controllers/                Auth (2FA), Setup, Diario, Esporta, Impostazioni
   Database/Migrations/        users, auth_tokens, trusted_devices, misurazioni, giornate
   Filters/                    AuthFilter (area riservata), GuestFilter
-  Helpers/diario_helper.php   definizione delle 14 colonne della scheda, soglie, formattazione
+  Helpers/diario_helper.php   definizione delle misurazioni, livelli, soglie, formattazione
   Libraries/Auth.php          sessione, password, dispositivi ricordati
   Libraries/MagicLink.php     generazione e invio dei link/codici monouso
   Libraries/PdfExporter.php   composizione del PDF mensile
@@ -116,8 +118,11 @@ resources/app.css             sorgente Tailwind
 tests/prova-completa.sh       prova end-to-end
 ```
 
-Le misurazioni sono una riga per (utente, giorno, slot): `valore` per le glicemie e le unità di
-insulina, `valore_testo` per la chetonuria, più `ora` e `nota`. Svuotare un campo cancella la riga.
+Le misurazioni sono una riga per (utente, giorno, slot): `valore` (glicemia o unità di insulina),
+`ora` e `nota`. Svuotare valore e nota cancella la riga. Ogni slot ha un `livello` che ne governa la
+visibilità nei moduli — `base` (glicemie della scheda), `extra` (controlli a 2 ore) e `avanzato`
+(insulina, prima dei pasti) — e un flag `primary` che serve solo a impaginare il PDF come il modulo,
+dove le colonne non bianche restano barrate.
 
 ## Dati e privacy
 

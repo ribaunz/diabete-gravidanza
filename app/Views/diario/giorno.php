@@ -10,14 +10,11 @@
  */
 $gruppi = group_labels();
 
+$livelli       = livelli_visibili($mostraTutte);
 $slotPerGruppo = [];
 
-foreach (slot_definitions() as $slot => $meta) {
-    if (! $mostraTutte && ! $meta['primary']) {
-        continue;
-    }
-
-    $slotPerGruppo[$meta['group']][] = $slot;
+foreach (slot_keys($livelli) as $slot) {
+    $slotPerGruppo[slot_meta($slot)['group']][] = $slot;
 }
 
 $classiStato = [
@@ -81,14 +78,16 @@ $badgeStato = [
                     $ora       = ($riga['ora'] ?? null) !== null ? substr((string) $riga['ora'], 0, 5) : '';
                     $stato     = value_status($slot, $valore, $utente);
                     $soglia    = slot_threshold($slot, $utente);
-                    $ehCheto   = $meta['type'] === 'chetonuria';
                     ?>
                     <div class="rounded-xl border p-3 transition <?= $classiStato[$stato] ?>">
                         <div class="mb-2 flex items-start justify-between gap-2">
                             <div>
                                 <p class="font-semibold text-slate-800"><?= esc($meta['label']) ?></p>
                                 <p class="text-xs text-slate-500">
-                                    <?= $soglia !== null ? 'obiettivo &lt; ' . $soglia . ' mg/dl' : ($meta['unit'] !== '' ? esc($meta['unit']) : 'stick urine') ?>
+                                    <?= $soglia !== null ? 'obiettivo &lt; ' . $soglia . ' mg/dl' : esc($meta['unit']) ?>
+                                    <?php if ($meta['livello'] !== 'base'): ?>
+                                        <span class="text-slate-400">· facoltativa</span>
+                                    <?php endif; ?>
                                 </p>
                             </div>
                             <?php if (isset($badgeStato[$stato])): ?>
@@ -97,22 +96,11 @@ $badgeStato = [
                         </div>
 
                         <div class="flex gap-2">
-                            <?php if ($ehCheto): ?>
-                                <select class="campo" name="valore_testo[<?= esc($slot, 'attr') ?>]" aria-label="Chetonuria">
-                                    <option value="">—</option>
-                                    <?php foreach (chetonuria_options() as $chiave => $etichetta): ?>
-                                        <option value="<?= esc($chiave, 'attr') ?>" <?= ($riga['valore_testo'] ?? '') === $chiave ? 'selected' : '' ?>>
-                                            <?= esc($etichetta) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            <?php else: ?>
-                                <input class="campo flex-1 text-lg font-semibold" type="text" inputmode="decimal"
-                                       name="valore[<?= esc($slot, 'attr') ?>]"
-                                       value="<?= esc($valore !== null ? format_value($slot, $valore) : '', 'attr') ?>"
-                                       placeholder="<?= $meta['type'] === 'insulina' ? 'U' : 'mg/dl' ?>"
-                                       aria-label="<?= esc($meta['label'], 'attr') ?>">
-                            <?php endif; ?>
+                            <input class="campo flex-1 text-lg font-semibold" type="text" inputmode="decimal"
+                                   name="valore[<?= esc($slot, 'attr') ?>]"
+                                   value="<?= esc(format_value($valore), 'attr') ?>"
+                                   placeholder="<?= $meta['type'] === 'insulina' ? 'U' : 'mg/dl' ?>"
+                                   aria-label="<?= esc($meta['label'], 'attr') ?>">
 
                             <input class="campo w-28" type="time" name="ora[<?= esc($slot, 'attr') ?>]"
                                    value="<?= esc($ora, 'attr') ?>" aria-label="Ora della misurazione">
@@ -147,7 +135,7 @@ $badgeStato = [
     <div class="sticky bottom-16 z-20 -mx-4 border-t border-slate-200 bg-white/95 px-4 py-3 backdrop-blur md:bottom-0">
         <div class="mx-auto flex max-w-6xl items-center justify-between gap-3">
             <a href="<?= site_url('giorno/' . $data . ($mostraTutte ? '' : '?tutte=1')) ?>" class="text-sm text-slate-500 underline">
-                <?= $mostraTutte ? 'Mostra solo le misurazioni della scheda' : 'Mostra anche insulina e altri controlli' ?>
+                <?= $mostraTutte ? 'Mostra solo glicemie a digiuno, 1 e 2 ore' : 'Mostra anche insulina e glicemie prima dei pasti' ?>
             </a>
             <button class="bottone" type="submit">Salva la giornata</button>
         </div>

@@ -28,7 +28,7 @@ foreach ($misurazioni as $giorno => $slots) {
     $conValore = false;
 
     foreach ($slots as $slot => $riga) {
-        if ($riga['valore'] !== null || $riga['valore_testo'] !== null) {
+        if ($riga['valore'] !== null) {
             $conValore = true;
         }
 
@@ -143,7 +143,7 @@ foreach ($giornate as $riga) {
                     </a>
                     <span class="text-slate-500"><?= esc(slot_label($voce['slot'])) ?></span>
                     <span class="pillola <?= $voce['stato'] === 'alto' ? 'bg-rose-100 text-rose-800' : 'bg-sky-100 text-sky-800' ?>">
-                        <?= esc(format_value($voce['slot'], $voce['riga']['valore'], $voce['riga']['valore_testo'])) ?> mg/dl
+                        <?= esc(format_value($voce['riga']['valore'])) ?> mg/dl
                     </span>
                     <?php if (($voce['riga']['nota'] ?? '') !== ''): ?>
                         <span class="w-full text-xs text-slate-500">📝 <?= esc($voce['riga']['nota']) ?></span>

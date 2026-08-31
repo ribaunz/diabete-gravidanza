@@ -11,9 +11,7 @@
  * @var array<string, mixed>                                $utente
  * @var bool                                                $mostraTutte
  */
-$colonne = array_values(array_filter(slot_keys(), static fn ($s) => $mostraTutte || slot_meta($s)['primary']));
-// Le celle chetonuria sono <select>: per lo spostamento con Invio contano solo gli <input>.
-$colonneInput = count(array_filter($colonne, static fn ($s) => slot_meta($s)['type'] !== 'chetonuria'));
+$colonne = slot_keys(livelli_visibili($mostraTutte));
 $oggi    = date('Y-m-d');
 
 $classiCella = [
@@ -33,7 +31,7 @@ $classiCella = [
 
     <div class="flex flex-wrap items-center gap-2">
         <a href="<?= site_url('mese/' . $mese . ($mostraTutte ? '' : '?tutte=1')) ?>" class="bottone-chiaro text-sm">
-            <?= $mostraTutte ? 'Solo colonne della scheda' : 'Tutte le colonne' ?>
+            <?= $mostraTutte ? 'Solo glicemie' : 'Tutte le colonne' ?>
         </a>
         <a href="<?= site_url('esporta/pdf/' . $mese) ?>" class="bottone text-sm" target="_blank" rel="noopener">Scarica PDF</a>
     </div>
@@ -55,7 +53,7 @@ $classiCella = [
                 <th class="sticky left-0 z-10 bg-slate-50 px-2 py-2 text-left">Giorno</th>
                 <?php foreach ($colonne as $slot): ?>
                     <?php $meta = slot_meta($slot); ?>
-                    <th class="px-1 py-2 font-medium leading-tight">
+                    <th class="px-1 py-2 font-medium leading-tight <?= $meta['livello'] === 'base' ? '' : 'text-slate-400' ?>">
                         <?= esc($meta['label']) ?>
                         <?php if ($meta['threshold'] !== null): ?>
                             <span class="block text-[10px] font-normal normal-case text-slate-400">
@@ -94,24 +92,13 @@ $classiCella = [
                         $meta   = slot_meta($slot);
                         $riga   = $misurazioni[$data][$slot] ?? null;
                         $stato  = value_status($slot, $riga['valore'] ?? null, $utente);
-                        $valore = $riga !== null ? format_value($slot, $riga['valore'], $riga['valore_testo']) : '';
+                        $valore = $riga !== null ? format_value($riga['valore']) : '';
                         ?>
                         <td class="p-0.5">
-                            <?php if ($meta['type'] === 'chetonuria'): ?>
-                                <select class="cella w-full rounded-lg border border-slate-200 bg-white px-1 py-1.5 text-center text-sm text-slate-700 hover:border-slate-300 focus:border-verde-500 focus:outline-none focus:ring-1 focus:ring-verde-200 disabled:border-transparent disabled:bg-transparent"
-                                        data-giorno="<?= esc($data, 'attr') ?>" data-slot="<?= esc($slot, 'attr') ?>" data-campo="valore_testo"
-                                        <?= $futuro ? 'disabled' : '' ?>>
-                                    <option value="">—</option>
-                                    <?php foreach (chetonuria_options() as $chiave => $etichetta): ?>
-                                        <option value="<?= esc($chiave, 'attr') ?>" <?= ($riga['valore_testo'] ?? '') === $chiave ? 'selected' : '' ?>><?= esc($etichetta) ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            <?php else: ?>
-                                <input class="cella w-full rounded-lg border border-slate-200 bg-white px-1 py-1.5 text-center hover:border-slate-300 focus:border-verde-500 focus:outline-none focus:ring-1 focus:ring-verde-200 disabled:border-transparent disabled:bg-transparent <?= $classiCella[$stato] ?>"
-                                       type="text" inputmode="decimal" value="<?= esc($valore, 'attr') ?>"
-                                       data-giorno="<?= esc($data, 'attr') ?>" data-slot="<?= esc($slot, 'attr') ?>" data-campo="valore"
-                                       aria-label="<?= esc($meta['label'] . ' del ' . $g, 'attr') ?>" <?= $futuro ? 'disabled' : '' ?>>
-                            <?php endif; ?>
+                            <input class="cella w-full rounded-lg border border-slate-200 bg-white px-1 py-1.5 text-center hover:border-slate-300 focus:border-verde-500 focus:outline-none focus:ring-1 focus:ring-verde-200 disabled:border-transparent disabled:bg-transparent <?= $classiCella[$stato] ?>"
+                                   type="text" inputmode="decimal" value="<?= esc($valore, 'attr') ?>"
+                                   data-giorno="<?= esc($data, 'attr') ?>" data-slot="<?= esc($slot, 'attr') ?>" data-campo="valore"
+                                   aria-label="<?= esc($meta['label'] . ' del ' . $g, 'attr') ?>" <?= $futuro ? 'disabled' : '' ?>>
                         </td>
                     <?php endforeach; ?>
 
@@ -160,7 +147,7 @@ $classiCella = [
                 <p class="text-sm text-slate-400">Nessuna misurazione registrata</p>
             <?php else: ?>
                 <div class="flex flex-wrap gap-1.5">
-                    <?php foreach (slot_keys(true) as $slot): ?>
+                    <?php foreach ($colonne as $slot): ?>
                         <?php
                         $riga = $slots[$slot] ?? null;
 
@@ -172,8 +159,8 @@ $classiCella = [
                         $badge = ['ok' => 'bg-verde-100 text-verde-800', 'alto' => 'bg-rose-100 text-rose-800', 'basso' => 'bg-sky-100 text-sky-800', 'neutro' => 'bg-slate-100 text-slate-600'][$stato];
                         ?>
                         <span class="pillola <?= $badge ?>">
-                            <?= esc(str_replace(['1 ora dopo ', 'A digiuno'], ['', 'digiuno'], slot_label($slot))) ?>:
-                            <?= esc(format_value($slot, $riga['valore'], $riga['valore_testo'])) ?>
+                            <?= esc(str_replace(['1 ora dopo ', '2 ore dopo ', 'A digiuno'], ['1h ', '2h ', 'digiuno'], slot_label($slot))) ?>:
+                            <?= esc(format_value($riga['valore'])) ?>
                             <?= ($riga['nota'] ?? '') !== '' ? ' 📝' : '' ?>
                         </span>
                     <?php endforeach; ?>
@@ -252,7 +239,7 @@ $classiCella = [
             campo.blur();
 
             const celle = [...griglia.querySelectorAll('input.cella:not([disabled])')];
-            const successiva = celle[celle.indexOf(campo) + <?= $colonneInput ?>];
+            const successiva = celle[celle.indexOf(campo) + <?= count($colonne) ?>];
             if (successiva) successiva.focus();
         });
     })();

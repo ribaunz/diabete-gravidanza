@@ -10,7 +10,7 @@ class MeasurementModel extends Model
     protected $primaryKey    = 'id';
     protected $returnType    = 'array';
     protected $useTimestamps = true;
-    protected $allowedFields = ['user_id', 'giorno', 'slot', 'valore', 'valore_testo', 'ora', 'nota'];
+    protected $allowedFields = ['user_id', 'giorno', 'slot', 'valore', 'ora', 'nota'];
 
     /**
      * Misurazioni di un giorno indicizzate per slot.
@@ -49,14 +49,13 @@ class MeasurementModel extends Model
     /**
      * Inserisce, aggiorna o cancella la misurazione di uno slot.
      *
-     * @param array{valore?: mixed, valore_testo?: mixed, ora?: mixed, nota?: mixed} $data
+     * @param array{valore?: mixed, ora?: mixed, nota?: mixed} $data
      */
     public function saveSlot(int $userId, string $giorno, string $slot, array $data): void
     {
-        $valore      = ($data['valore'] ?? '') === '' ? null : (float) str_replace(',', '.', (string) $data['valore']);
-        $valoreTesto = trim((string) ($data['valore_testo'] ?? '')) ?: null;
-        $ora         = trim((string) ($data['ora'] ?? '')) ?: null;
-        $nota        = trim((string) ($data['nota'] ?? '')) ?: null;
+        $valore = ($data['valore'] ?? '') === '' ? null : (float) str_replace(',', '.', (string) $data['valore']);
+        $ora    = trim((string) ($data['ora'] ?? '')) ?: null;
+        $nota   = trim((string) ($data['nota'] ?? '')) ?: null;
 
         if ($ora !== null && preg_match('/^\d{2}:\d{2}$/', $ora) === 1) {
             $ora .= ':00';
@@ -67,7 +66,7 @@ class MeasurementModel extends Model
             ->where('slot', $slot)
             ->first();
 
-        $isEmpty = $valore === null && $valoreTesto === null && $nota === null;
+        $isEmpty = $valore === null && $nota === null;
 
         if ($isEmpty) {
             if ($existing !== null) {
@@ -78,10 +77,9 @@ class MeasurementModel extends Model
         }
 
         $payload = [
-            'valore'       => $valore,
-            'valore_testo' => $valoreTesto,
-            'ora'          => $ora,
-            'nota'         => $nota,
+            'valore' => $valore,
+            'ora'    => $ora,
+            'nota'   => $nota,
         ];
 
         if ($existing !== null) {

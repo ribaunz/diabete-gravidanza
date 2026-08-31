@@ -49,13 +49,12 @@ class Diario extends BaseController
 
         $userId  = (int) $this->utente['id'];
         $valori  = (array) ($this->request->getPost('valore') ?? []);
-        $testi   = (array) ($this->request->getPost('valore_testo') ?? []);
         $ore     = (array) ($this->request->getPost('ora') ?? []);
         $note    = (array) ($this->request->getPost('nota') ?? []);
         $modello = model(MeasurementModel::class);
 
         foreach (slot_keys() as $slot) {
-            if (! array_key_exists($slot, $valori) && ! array_key_exists($slot, $testi) && ! array_key_exists($slot, $note)) {
+            if (! array_key_exists($slot, $valori) && ! array_key_exists($slot, $note)) {
                 continue; // slot non presente nel modulo (colonne nascoste): non si tocca il dato salvato
             }
 
@@ -66,10 +65,9 @@ class Diario extends BaseController
             }
 
             $modello->saveSlot($userId, $data, $slot, [
-                'valore'       => $valori[$slot] ?? '',
-                'valore_testo' => $testi[$slot] ?? '',
-                'ora'          => $ore[$slot] ?? '',
-                'nota'         => $note[$slot] ?? '',
+                'valore' => $valori[$slot] ?? '',
+                'ora'    => $ore[$slot] ?? '',
+                'nota'   => $note[$slot] ?? '',
             ]);
         }
 
@@ -101,10 +99,9 @@ class Diario extends BaseController
 
         $userId = (int) $this->utente['id'];
         model(MeasurementModel::class)->saveSlot($userId, $data, $slot, [
-            'valore'       => $valore,
-            'valore_testo' => (string) $this->request->getPost('valore_testo'),
-            'ora'          => (string) $this->request->getPost('ora'),
-            'nota'         => (string) $this->request->getPost('nota'),
+            'valore' => $valore,
+            'ora'    => (string) $this->request->getPost('ora'),
+            'nota'   => (string) $this->request->getPost('nota'),
         ]);
 
         return $this->response->setJSON([

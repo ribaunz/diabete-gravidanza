@@ -14,7 +14,6 @@ class CreateMeasurements extends Migration
             'giorno'      => ['type' => 'DATE'],
             'slot'        => ['type' => 'VARCHAR', 'constraint' => 32],
             'valore'      => ['type' => 'DECIMAL', 'constraint' => '6,1', 'null' => true],
-            'valore_testo'=> ['type' => 'VARCHAR', 'constraint' => 24, 'null' => true],
             'ora'         => ['type' => 'TIME', 'null' => true],
             'nota'        => ['type' => 'VARCHAR', 'constraint' => 500, 'null' => true],
             'created_at'  => ['type' => 'DATETIME', 'null' => true],

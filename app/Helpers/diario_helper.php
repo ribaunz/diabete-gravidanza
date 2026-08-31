@@ -4,16 +4,24 @@
  * Definizione delle misurazioni della scheda "Stick a giorni alterni x 4 volte al giorno"
  * (U.O.S. Diabetologia e Malattie Metaboliche - Ospedale di Viareggio).
  *
- * Le colonne bianche della scheda cartacea sono quelle da compilare: chetonuria, a digiuno,
- * 1 ora dopo colazione, 1 ora dopo pranzo, 1 ora dopo cena. Le altre colonne sono barrate
- * sulla scheda ma restano disponibili nell'app per chi ha una terapia insulinica.
+ * Ogni slot ha due attributi che ne governano l'uso:
+ *
+ *  - `primary`: la colonna è bianca sulla scheda cartacea (le altre sono barrate);
+ *    serve solo a impaginare il PDF come il modulo originale.
+ *  - `livello`: quanto è in evidenza nell'applicazione.
+ *      'base'      glicemie della scheda: a digiuno e 1 ora dopo i tre pasti;
+ *      'extra'     controlli a 2 ore dopo il pasto, da compilare quando servono;
+ *      'avanzato'  unità di insulina e glicemie prima dei pasti, visibili su richiesta.
+ *
+ * La chetonuria resta stampata sulla scheda in PDF ma non viene raccolta dall'app,
+ * quindi non compare fra gli slot.
  */
 
 if (! function_exists('slot_definitions')) {
     /**
      * @return array<string, array{
      *     group: string, type: string, label: string, sheet: list<string>,
-     *     threshold: int|null, primary: bool, unit: string, time_hint: string
+     *     threshold: int|null, primary: bool, livello: string, unit: string, time_hint: string
      * }>
      */
     function slot_definitions(): array
@@ -25,75 +33,83 @@ if (! function_exists('slot_definitions')) {
         }
 
         $slots = [
-            'chetonuria' => [
-                'group' => 'giorno', 'type' => 'chetonuria',
-                'label' => 'Chetonuria', 'sheet' => ['chetonuria'],
-                'threshold' => null, 'primary' => true, 'unit' => '', 'time_hint' => '07:00',
-            ],
             'digiuno' => [
                 'group' => 'colazione', 'type' => 'glicemia',
                 'label' => 'A digiuno', 'sheet' => ['A digiuno', '(< 90 mg/dl)'],
-                'threshold' => 90, 'primary' => true, 'unit' => 'mg/dl', 'time_hint' => '07:30',
+                'threshold' => 90, 'primary' => true, 'livello' => 'base',
+                'unit' => 'mg/dl', 'time_hint' => '07:30',
             ],
             'insulina_colazione' => [
                 'group' => 'colazione', 'type' => 'insulina',
                 'label' => 'Insulina colazione', 'sheet' => ['Unità di', 'insulina'],
-                'threshold' => null, 'primary' => false, 'unit' => 'U', 'time_hint' => '07:45',
+                'threshold' => null, 'primary' => false, 'livello' => 'avanzato',
+                'unit' => 'U', 'time_hint' => '07:45',
             ],
             'colazione_1h' => [
                 'group' => 'colazione', 'type' => 'glicemia',
                 'label' => '1 ora dopo colazione', 'sheet' => ['1 ora dopo la', 'colazione', '(< 130 mg/dl)'],
-                'threshold' => 130, 'primary' => true, 'unit' => 'mg/dl', 'time_hint' => '09:00',
+                'threshold' => 130, 'primary' => true, 'livello' => 'base',
+                'unit' => 'mg/dl', 'time_hint' => '09:00',
             ],
             'colazione_2h' => [
                 'group' => 'colazione', 'type' => 'glicemia',
                 'label' => '2 ore dopo colazione', 'sheet' => ['2 ore dopo', 'il pasto', '(< 120 mg/dl)'],
-                'threshold' => 120, 'primary' => false, 'unit' => 'mg/dl', 'time_hint' => '10:00',
+                'threshold' => 120, 'primary' => false, 'livello' => 'extra',
+                'unit' => 'mg/dl', 'time_hint' => '10:00',
             ],
             'pre_pranzo' => [
                 'group' => 'pranzo', 'type' => 'glicemia',
                 'label' => 'Prima di pranzo', 'sheet' => ['Prima di', 'pranzo'],
-                'threshold' => null, 'primary' => false, 'unit' => 'mg/dl', 'time_hint' => '12:30',
+                'threshold' => null, 'primary' => false, 'livello' => 'avanzato',
+                'unit' => 'mg/dl', 'time_hint' => '12:30',
             ],
             'insulina_pranzo' => [
                 'group' => 'pranzo', 'type' => 'insulina',
                 'label' => 'Insulina pranzo', 'sheet' => ['Unità di', 'insulina'],
-                'threshold' => null, 'primary' => false, 'unit' => 'U', 'time_hint' => '12:45',
+                'threshold' => null, 'primary' => false, 'livello' => 'avanzato',
+                'unit' => 'U', 'time_hint' => '12:45',
             ],
             'pranzo_1h' => [
                 'group' => 'pranzo', 'type' => 'glicemia',
                 'label' => '1 ora dopo pranzo', 'sheet' => ['1 ora dopo', 'il pasto', '(< 130 mg/dl)'],
-                'threshold' => 130, 'primary' => true, 'unit' => 'mg/dl', 'time_hint' => '14:00',
+                'threshold' => 130, 'primary' => true, 'livello' => 'base',
+                'unit' => 'mg/dl', 'time_hint' => '14:00',
             ],
             'pranzo_2h' => [
                 'group' => 'pranzo', 'type' => 'glicemia',
                 'label' => '2 ore dopo pranzo', 'sheet' => ['2 ore dopo', 'il pasto', '(< 120 mg/dl)'],
-                'threshold' => 120, 'primary' => false, 'unit' => 'mg/dl', 'time_hint' => '15:00',
+                'threshold' => 120, 'primary' => false, 'livello' => 'extra',
+                'unit' => 'mg/dl', 'time_hint' => '15:00',
             ],
             'pre_cena' => [
                 'group' => 'cena', 'type' => 'glicemia',
                 'label' => 'Prima di cena', 'sheet' => ['Prima di', 'cena'],
-                'threshold' => null, 'primary' => false, 'unit' => 'mg/dl', 'time_hint' => '19:30',
+                'threshold' => null, 'primary' => false, 'livello' => 'avanzato',
+                'unit' => 'mg/dl', 'time_hint' => '19:30',
             ],
             'insulina_cena' => [
                 'group' => 'cena', 'type' => 'insulina',
                 'label' => 'Insulina cena', 'sheet' => ['Unità di', 'insulina'],
-                'threshold' => null, 'primary' => false, 'unit' => 'U', 'time_hint' => '19:45',
+                'threshold' => null, 'primary' => false, 'livello' => 'avanzato',
+                'unit' => 'U', 'time_hint' => '19:45',
             ],
             'cena_1h' => [
                 'group' => 'cena', 'type' => 'glicemia',
                 'label' => '1 ora dopo cena', 'sheet' => ['1 ora dopo', 'cena', '(< 130 mg/dl)'],
-                'threshold' => 130, 'primary' => true, 'unit' => 'mg/dl', 'time_hint' => '21:00',
+                'threshold' => 130, 'primary' => true, 'livello' => 'base',
+                'unit' => 'mg/dl', 'time_hint' => '21:00',
             ],
             'cena_2h' => [
                 'group' => 'cena', 'type' => 'glicemia',
                 'label' => '2 ore dopo cena', 'sheet' => ['2 ore dopo', 'il pasto', '(< 120 mg/dl)'],
-                'threshold' => 120, 'primary' => false, 'unit' => 'mg/dl', 'time_hint' => '22:00',
+                'threshold' => 120, 'primary' => false, 'livello' => 'extra',
+                'unit' => 'mg/dl', 'time_hint' => '22:00',
             ],
             'insulina_notte' => [
                 'group' => 'notte', 'type' => 'insulina',
                 'label' => 'Insulina prima di coricarsi', 'sheet' => ['Unità di', 'insulina'],
-                'threshold' => null, 'primary' => false, 'unit' => 'U', 'time_hint' => '23:00',
+                'threshold' => null, 'primary' => false, 'livello' => 'avanzato',
+                'unit' => 'U', 'time_hint' => '23:00',
             ],
         ];
 
@@ -102,16 +118,38 @@ if (! function_exists('slot_definitions')) {
 }
 
 if (! function_exists('slot_keys')) {
-    /** @return list<string> */
-    function slot_keys(bool $onlyPrimary = false): array
+    /**
+     * Slot dell'applicazione, eventualmente filtrati per livello.
+     *
+     * @param list<string>|null $livelli es. ['base', 'extra']; null = tutti
+     *
+     * @return list<string>
+     */
+    function slot_keys(?array $livelli = null): array
     {
         $keys = array_keys(slot_definitions());
 
-        if (! $onlyPrimary) {
+        if ($livelli === null) {
             return $keys;
         }
 
-        return array_values(array_filter($keys, static fn ($k) => slot_definitions()[$k]['primary']));
+        return array_values(array_filter(
+            $keys,
+            static fn ($k) => in_array(slot_definitions()[$k]['livello'], $livelli, true)
+        ));
+    }
+}
+
+if (! function_exists('livelli_visibili')) {
+    /**
+     * Livelli da mostrare nei moduli: le glicemie della scheda e i controlli a 2 ore
+     * sono sempre disponibili, insulina e pre-pasto solo su richiesta.
+     *
+     * @return list<string>
+     */
+    function livelli_visibili(bool $mostraTutte): array
+    {
+        return $mostraTutte ? ['base', 'extra', 'avanzato'] : ['base', 'extra'];
     }
 }
 
@@ -135,25 +173,10 @@ if (! function_exists('group_labels')) {
     function group_labels(): array
     {
         return [
-            'giorno'    => 'Giornata',
             'colazione' => 'Colazione',
             'pranzo'    => 'Pranzo',
             'cena'      => 'Cena',
             'notte'     => 'Prima di coricarsi',
-        ];
-    }
-}
-
-if (! function_exists('chetonuria_options')) {
-    /** @return array<string, string> */
-    function chetonuria_options(): array
-    {
-        return [
-            'assente' => 'Assente',
-            'tracce'  => 'Tracce',
-            '+'       => '+',
-            '++'      => '++',
-            '+++'     => '+++',
         ];
     }
 }
@@ -216,25 +239,13 @@ if (! function_exists('value_status')) {
 }
 
 if (! function_exists('format_value')) {
-    function format_value(string $slot, int|float|string|null $value, ?string $textValue = null): string
+    function format_value(int|float|string|null $value): string
     {
-        $meta = slot_meta($slot);
-
-        if (($meta['type'] ?? '') === 'chetonuria') {
-            if ($textValue === null || $textValue === '') {
-                return '';
-            }
-
-            return chetonuria_options()[$textValue] ?? $textValue;
-        }
-
         if ($value === null || $value === '') {
             return '';
         }
 
-        $value = (float) $value;
-
-        return rtrim(rtrim(number_format($value, 1, ',', ''), '0'), ',');
+        return rtrim(rtrim(number_format((float) $value, 1, ',', ''), '0'), ',');
     }
 }
 

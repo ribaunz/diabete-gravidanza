@@ -13,8 +13,9 @@
  */
 helper('diario');
 
+// Ordine delle colonne stampate, uguale al modulo cartaceo. La chetonuria non viene
+// raccolta dall'app: la colonna resta sulla scheda ma esce sempre vuota, da compilare a mano.
 $colonne = [
-    ['slot' => 'chetonuria', 'gruppo' => null],
     ['slot' => 'digiuno', 'gruppo' => 'colazione'],
     ['slot' => 'insulina_colazione', 'gruppo' => 'colazione'],
     ['slot' => 'colazione_1h', 'gruppo' => 'colazione'],
@@ -63,6 +64,8 @@ $intestazione = $utente['intestazione'] ?: 'Azienda USL Toscana Nord Ovest';
     td.giorno { font-size: 7pt; }
     .spenta { background: #cccccc; color: #555; }
     .spenta span { text-decoration: line-through; }
+    /* Un valore registrato resta leggibile anche nelle colonne barrate (es. il controllo a 2 ore). */
+    td.spenta.compilata { color: #000; }
     td.alto { font-weight: bold; }
     td.alto:after { content: " ▲"; font-size: 5pt; }
     .marcatore { font-size: 5.5pt; vertical-align: super; }
@@ -118,7 +121,7 @@ $intestazione = $utente['intestazione'] ?: 'Azienda USL Toscana Nord Ovest';
             <colgroup>
                 <col style="width: 4%">
                 <col style="width: 6%">
-                <?php foreach (array_slice($colonne, 1) as $c): ?>
+                <?php foreach ($colonne as $c): ?>
                     <col style="width: <?= $c['slot'] === 'insulina_notte' ? '7' : '6.9' ?>%">
                 <?php endforeach; ?>
             </colgroup>
@@ -131,7 +134,7 @@ $intestazione = $utente['intestazione'] ?: 'Azienda USL Toscana Nord Ovest';
                 <th class="gruppo spenta"><span>Prima di coricarsi</span></th>
             </tr>
             <tr>
-                <?php foreach (array_slice($colonne, 1) as $c): ?>
+                <?php foreach ($colonne as $c): ?>
                     <?php $meta = slot_meta($c['slot']); ?>
                     <th class="<?= $meta['primary'] ? '' : 'spenta' ?>">
                         <span><?= implode('<br>', array_map('esc', $meta['sheet'])) ?></span>
@@ -143,14 +146,19 @@ $intestazione = $utente['intestazione'] ?: 'Azienda USL Toscana Nord Ovest';
                 <?php $data = sprintf('%04d-%02d-%02d', $anno, $numeroMese, $g); ?>
                 <tr>
                     <td class="giorno"><?= $g ?></td>
+                    <td></td><!-- chetonuria: da compilare a mano sulla stampa -->
                     <?php foreach ($colonne as $c): ?>
                         <?php
                         $slot   = $c['slot'];
                         $meta   = slot_meta($slot);
                         $riga   = $misurazioni[$data][$slot] ?? null;
-                        $testo  = $riga !== null ? format_value($slot, $riga['valore'], $riga['valore_testo']) : '';
+                        $testo  = $riga !== null ? format_value($riga['valore']) : '';
                         $stato  = $riga !== null ? value_status($slot, $riga['valore'], $utente) : 'neutro';
                         $classi = $meta['primary'] ? [] : ['spenta'];
+
+                        if ($testo !== '') {
+                            $classi[] = 'compilata';
+                        }
 
                         if ($stato === 'alto' || $stato === 'basso') {
                             $classi[] = 'alto';

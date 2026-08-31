@@ -85,7 +85,7 @@ class PdfExporter
                 $note[$giorno]['voci'][] = [
                     'slot'   => $slot,
                     'ora'    => $riga['ora'] !== null ? substr((string) $riga['ora'], 0, 5) : null,
-                    'valore' => format_value($slot, $riga['valore'], $riga['valore_testo']),
+                    'valore' => format_value($riga['valore']),
                     'nota'   => (string) $riga['nota'],
                 ];
             }
