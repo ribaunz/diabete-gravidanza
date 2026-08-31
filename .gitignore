@@ -1,0 +1,23 @@
+# Dipendenze
+/vendor/
+/node_modules/
+
+# Configurazione locale / segreti
+.env
+.env.local
+config.local.php
+
+# Build
+/dist/
+/build/
+
+# Log e cache
+*.log
+/storage/logs/
+/cache/
+
+# Editor / OS
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
