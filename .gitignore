@@ -1,23 +1,12 @@
-# Dipendenze
 /vendor/
 /node_modules/
-
-# Configurazione locale / segreti
+/writable/cache/*
+/writable/logs/*
+/writable/session/*
+/writable/uploads/*
+/writable/debugbar/*
+/writable/emails/*
+!/writable/**/index.html
+/writable/*.db
 .env
-.env.local
-config.local.php
-
-# Build
-/dist/
-/build/
-
-# Log e cache
-*.log
-/storage/logs/
-/cache/
-
-# Editor / OS
-.vscode/
-.idea/
-Thumbs.db
-Desktop.ini
+.phpunit.result.cache
