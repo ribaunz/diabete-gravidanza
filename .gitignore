@@ -10,3 +10,4 @@
 /writable/*.db
 .env
 .phpunit.result.cache
+IP_NETCUP.txt
