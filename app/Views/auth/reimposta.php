@@ -17,12 +17,14 @@
 
     <div>
         <label class="etichetta" for="password">Nuova password</label>
-        <input class="campo" type="password" id="password" name="password" required autocomplete="new-password">
+        <input class="campo" type="password" id="password" name="password" required autocomplete="new-password"
+               placeholder="Almeno 10 caratteri">
     </div>
 
     <div>
         <label class="etichetta" for="conferma">Ripeti la password</label>
-        <input class="campo" type="password" id="conferma" name="conferma" required autocomplete="new-password">
+        <input class="campo" type="password" id="conferma" name="conferma" required autocomplete="new-password"
+               placeholder="Ripeti la password">
     </div>
 
     <button class="bottone w-full" type="submit">Salva la password</button>

@@ -44,6 +44,26 @@
         @apply rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5;
     }
 
+    /* Gli input type="time" e type="date" non supportano placeholder: su iOS restano
+       visivamente vuoti. Mostriamo un segnaposto sopra il campo finche' non c'e' un valore. */
+    .campo-nativo[value=""]:not(:focus) {
+        color: transparent;
+    }
+
+    .segnaposto-sovrapposto {
+        @apply pointer-events-none absolute inset-y-0 left-3 hidden items-center text-slate-400;
+    }
+
+    .campo-nativo[value=""]:not(:focus) + .segnaposto-sovrapposto {
+        @apply flex;
+    }
+
+    /* Nella griglia del mese le celle sono strette: il segnaposto va rimpicciolito
+       (il font dell'input resta a 16px per non far zoomare iOS). */
+    .cella::placeholder {
+        @apply text-[11px] text-slate-300;
+    }
+
     .pillola {
         @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold;
     }

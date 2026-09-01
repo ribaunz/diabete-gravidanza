@@ -97,6 +97,7 @@ $classiCella = [
                         <td class="p-0.5">
                             <input class="cella w-full rounded-lg border border-slate-200 bg-white px-1 py-1.5 text-center hover:border-slate-300 focus:border-verde-500 focus:outline-none focus:ring-1 focus:ring-verde-200 disabled:border-transparent disabled:bg-transparent <?= $classiCella[$stato] ?>"
                                    type="text" inputmode="decimal" value="<?= esc($valore, 'attr') ?>"
+                                   placeholder="<?= $meta['type'] === 'insulina' ? 'U' : 'mg/dl' ?>"
                                    data-giorno="<?= esc($data, 'attr') ?>" data-slot="<?= esc($slot, 'attr') ?>" data-campo="valore"
                                    aria-label="<?= esc($meta['label'] . ' del ' . $g, 'attr') ?>" <?= $futuro ? 'disabled' : '' ?>>
                         </td>

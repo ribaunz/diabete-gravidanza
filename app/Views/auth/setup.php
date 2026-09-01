@@ -9,30 +9,37 @@
 
     <div>
         <label class="etichetta" for="nome">Nome</label>
-        <input class="campo" type="text" id="nome" name="nome" required value="<?= esc(old('nome'), 'attr') ?>">
+        <input class="campo" type="text" id="nome" name="nome" required placeholder="Es. Giulia Rossi"
+               value="<?= esc(old('nome'), 'attr') ?>">
     </div>
 
     <div>
         <label class="etichetta" for="email">Email</label>
         <input class="campo" type="email" id="email" name="email" required autocomplete="username"
-               value="<?= esc(old('email'), 'attr') ?>">
+               placeholder="nome@esempio.it" value="<?= esc(old('email'), 'attr') ?>">
         <p class="mt-1 text-xs text-slate-500">Qui arriveranno i link di accesso: usa un indirizzo che leggi dal telefono.</p>
     </div>
 
     <div>
         <label class="etichetta" for="data_presunta_parto">Data presunta del parto <span class="font-normal text-slate-400">(facoltativa)</span></label>
-        <input class="campo" type="date" id="data_presunta_parto" name="data_presunta_parto"
-               value="<?= esc(old('data_presunta_parto'), 'attr') ?>">
+        <span class="relative block">
+            <input class="campo campo-nativo" type="date" id="data_presunta_parto" name="data_presunta_parto"
+                   value="<?= esc(old('data_presunta_parto'), 'attr') ?>"
+                   oninput="this.setAttribute('value', this.value)">
+            <span class="segnaposto-sovrapposto">gg/mm/aaaa</span>
+        </span>
     </div>
 
     <div>
         <label class="etichetta" for="password">Password <span class="font-normal text-slate-400">(almeno 10 caratteri)</span></label>
-        <input class="campo" type="password" id="password" name="password" required autocomplete="new-password">
+        <input class="campo" type="password" id="password" name="password" required autocomplete="new-password"
+               placeholder="Almeno 10 caratteri">
     </div>
 
     <div>
         <label class="etichetta" for="conferma">Ripeti la password</label>
-        <input class="campo" type="password" id="conferma" name="conferma" required autocomplete="new-password">
+        <input class="campo" type="password" id="conferma" name="conferma" required autocomplete="new-password"
+               placeholder="Ripeti la password">
     </div>
 
     <button class="bottone w-full" type="submit">Crea l'account</button>

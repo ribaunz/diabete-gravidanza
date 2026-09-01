@@ -9,7 +9,8 @@
 
     <div>
         <label class="etichetta" for="email">Email</label>
-        <input class="campo" type="email" id="email" name="email" required value="<?= esc(old('email'), 'attr') ?>">
+        <input class="campo" type="email" id="email" name="email" required placeholder="nome@esempio.it"
+               value="<?= esc(old('email'), 'attr') ?>">
     </div>
 
     <button class="bottone w-full" type="submit">Invia il link</button>

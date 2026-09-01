@@ -10,12 +10,13 @@
     <div>
         <label class="etichetta" for="email">Email</label>
         <input class="campo" type="email" id="email" name="email" required autocomplete="username"
-               inputmode="email" value="<?= esc(old('email'), 'attr') ?>">
+               inputmode="email" placeholder="nome@esempio.it" value="<?= esc(old('email'), 'attr') ?>">
     </div>
 
     <div>
         <label class="etichetta" for="password">Password</label>
-        <input class="campo" type="password" id="password" name="password" required autocomplete="current-password">
+        <input class="campo" type="password" id="password" name="password" required autocomplete="current-password"
+               placeholder="La tua password">
     </div>
 
     <label class="flex items-start gap-2 text-sm text-slate-600">

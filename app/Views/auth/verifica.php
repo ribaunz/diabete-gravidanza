@@ -14,7 +14,8 @@
     <div>
         <label class="etichetta" for="codice">Codice di verifica</label>
         <input class="campo text-center text-2xl font-semibold tracking-[0.4em]" type="text" id="codice" name="codice"
-               inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" required autofocus>
+               inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" required autofocus
+               placeholder="000000">
     </div>
 
     <button class="bottone w-full" type="submit">Entra</button>

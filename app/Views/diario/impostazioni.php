@@ -16,30 +16,35 @@
 
         <div>
             <label class="etichetta" for="nome">Nome (stampato sulla scheda)</label>
-            <input class="campo" type="text" id="nome" name="nome" value="<?= esc($utente['nome'], 'attr') ?>">
+            <input class="campo" type="text" id="nome" name="nome" placeholder="Es. Giulia Rossi"
+                   value="<?= esc($utente['nome'], 'attr') ?>">
         </div>
 
         <div>
             <label class="etichetta" for="data_presunta_parto">Data presunta del parto</label>
-            <input class="campo" type="date" id="data_presunta_parto" name="data_presunta_parto"
-                   value="<?= esc($utente['data_presunta_parto'], 'attr') ?>">
+            <span class="relative block">
+                <input class="campo campo-nativo" type="date" id="data_presunta_parto" name="data_presunta_parto"
+                       value="<?= esc($utente['data_presunta_parto'], 'attr') ?>"
+                       oninput="this.setAttribute('value', this.value)">
+                <span class="segnaposto-sovrapposto">gg/mm/aaaa</span>
+            </span>
         </div>
 
         <div class="grid grid-cols-3 gap-2">
             <div>
                 <label class="etichetta" for="soglia_digiuno">A digiuno</label>
                 <input class="campo" type="number" min="60" max="300" id="soglia_digiuno" name="soglia_digiuno"
-                       value="<?= (int) $utente['soglia_digiuno'] ?>">
+                       placeholder="90 mg/dl" value="<?= (int) $utente['soglia_digiuno'] ?>">
             </div>
             <div>
                 <label class="etichetta" for="soglia_post_1h">1 ora dopo</label>
                 <input class="campo" type="number" min="60" max="300" id="soglia_post_1h" name="soglia_post_1h"
-                       value="<?= (int) $utente['soglia_post_1h'] ?>">
+                       placeholder="130 mg/dl" value="<?= (int) $utente['soglia_post_1h'] ?>">
             </div>
             <div>
                 <label class="etichetta" for="soglia_post_2h">2 ore dopo</label>
                 <input class="campo" type="number" min="60" max="300" id="soglia_post_2h" name="soglia_post_2h"
-                       value="<?= (int) $utente['soglia_post_2h'] ?>">
+                       placeholder="120 mg/dl" value="<?= (int) $utente['soglia_post_2h'] ?>">
             </div>
         </div>
         <p class="-mt-2 text-xs text-slate-500">
@@ -68,15 +73,18 @@
 
             <div>
                 <label class="etichetta" for="attuale">Password attuale</label>
-                <input class="campo" type="password" id="attuale" name="attuale" autocomplete="current-password" required>
+                <input class="campo" type="password" id="attuale" name="attuale" autocomplete="current-password" required
+                       placeholder="La password che usi ora">
             </div>
             <div>
                 <label class="etichetta" for="password">Nuova password</label>
-                <input class="campo" type="password" id="password" name="password" autocomplete="new-password" required>
+                <input class="campo" type="password" id="password" name="password" autocomplete="new-password" required
+                       placeholder="Almeno 10 caratteri">
             </div>
             <div>
                 <label class="etichetta" for="conferma">Ripeti la nuova password</label>
-                <input class="campo" type="password" id="conferma" name="conferma" autocomplete="new-password" required>
+                <input class="campo" type="password" id="conferma" name="conferma" autocomplete="new-password" required
+                       placeholder="Ripeti la nuova password">
             </div>
 
             <button class="bottone" type="submit">Aggiorna la password</button>

@@ -8,12 +8,14 @@
 
     <div>
         <label class="etichetta" for="nome">Nome</label>
-        <input class="campo" type="text" id="nome" name="nome" value="<?= esc(old('nome'), 'attr') ?>" required>
+        <input class="campo" type="text" id="nome" name="nome" placeholder="Es. Giulia Rossi"
+               value="<?= esc(old('nome'), 'attr') ?>" required>
     </div>
 
     <div>
         <label class="etichetta" for="email">Email</label>
-        <input class="campo" type="email" id="email" name="email" value="<?= esc(old('email'), 'attr') ?>" required>
+        <input class="campo" type="email" id="email" name="email" placeholder="nome@esempio.it"
+               value="<?= esc(old('email'), 'attr') ?>" required>
         <p class="mt-1 text-xs text-slate-500">
             A questo indirizzo arriva il link per scegliere la password. Serve anche
             come secondo fattore a ogni accesso.
@@ -22,8 +24,12 @@
 
     <div>
         <label class="etichetta" for="data_presunta_parto">Data presunta del parto (facoltativa)</label>
-        <input class="campo" type="date" id="data_presunta_parto" name="data_presunta_parto"
-               value="<?= esc(old('data_presunta_parto'), 'attr') ?>">
+        <span class="relative block">
+            <input class="campo campo-nativo" type="date" id="data_presunta_parto" name="data_presunta_parto"
+                   value="<?= esc(old('data_presunta_parto'), 'attr') ?>"
+                   oninput="this.setAttribute('value', this.value)">
+            <span class="segnaposto-sovrapposto">gg/mm/aaaa</span>
+        </span>
     </div>
 
     <div>

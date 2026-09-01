@@ -102,8 +102,12 @@ $badgeStato = [
                                    placeholder="<?= $meta['type'] === 'insulina' ? 'U' : 'mg/dl' ?>"
                                    aria-label="<?= esc($meta['label'], 'attr') ?>">
 
-                            <input class="campo w-28" type="time" name="ora[<?= esc($slot, 'attr') ?>]"
-                                   value="<?= esc($ora, 'attr') ?>" aria-label="Ora della misurazione">
+                            <label class="relative w-28 shrink-0">
+                                <input class="campo campo-nativo w-full" type="time" name="ora[<?= esc($slot, 'attr') ?>]"
+                                       value="<?= esc($ora, 'attr') ?>" aria-label="Ora della misurazione"
+                                       oninput="this.setAttribute('value', this.value)">
+                                <span class="segnaposto-sovrapposto">Ora</span>
+                            </label>
                         </div>
 
                         <details class="mt-2" <?= $nota !== '' ? 'open' : '' ?>>
@@ -127,7 +131,7 @@ $badgeStato = [
 
         <div class="mt-3 max-w-[12rem]">
             <label class="etichetta" for="peso">Peso (kg)</label>
-            <input class="campo" type="text" inputmode="decimal" id="peso" name="peso"
+            <input class="campo" type="text" inputmode="decimal" id="peso" name="peso" placeholder="kg"
                    value="<?= esc(($giornata['peso'] ?? null) !== null ? rtrim(rtrim(number_format((float) $giornata['peso'], 2, ',', ''), '0'), ',') : '', 'attr') ?>">
         </div>
     </section>
