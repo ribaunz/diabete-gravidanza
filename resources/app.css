@@ -46,20 +46,11 @@
 
     /* Gli input type="time" e type="date" non supportano placeholder: su iOS restano
        visivamente vuoti. Mostriamo un segnaposto sopra il campo finche' non c'e' un valore. */
-    /* iOS disegna gli input date/time con una larghezza intrinseca fissa che sborda dal
-       contenitore: togliamo l'aspetto nativo cosi' la larghezza la decide il layout. */
+    /* iOS disegna gli input date con una larghezza intrinseca propria: la limitiamo
+       al contenitore senza toccare l'aspetto nativo del controllo. */
     .campo-nativo {
-        -webkit-appearance: none;
-        appearance: none;
         min-width: 0;
         max-width: 100%;
-    }
-
-    .campo-nativo::-webkit-date-and-time-value {
-        margin: 0;
-        min-width: 0;
-        width: 100%;
-        text-align: left;
     }
 
     .campo-nativo[value=""]:not(:focus) {
@@ -78,6 +69,12 @@
        (il font dell'input resta a 16px per non far zoomare iOS). */
     .cella::placeholder {
         @apply text-[11px] text-slate-300;
+    }
+
+    /* La barra con "Salva la giornata" resta appoggiata alla barra di navigazione
+       in basso, che e' alta h-14 piu' la safe area dell'iPhone. */
+    .barra-azioni {
+        bottom: calc(3.5rem + env(safe-area-inset-bottom));
     }
 
     .pillola {

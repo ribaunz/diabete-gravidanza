@@ -54,12 +54,8 @@ class MeasurementModel extends Model
     public function saveSlot(int $userId, string $giorno, string $slot, array $data): void
     {
         $valore = ($data['valore'] ?? '') === '' ? null : (float) str_replace(',', '.', (string) $data['valore']);
-        $ora    = trim((string) ($data['ora'] ?? '')) ?: null;
+        $ora    = $this->normalizzaOra((string) ($data['ora'] ?? ''));
         $nota   = trim((string) ($data['nota'] ?? '')) ?: null;
-
-        if ($ora !== null && preg_match('/^\d{2}:\d{2}$/', $ora) === 1) {
-            $ora .= ':00';
-        }
 
         $existing = $this->where('user_id', $userId)
             ->where('giorno', $giorno)
@@ -93,6 +89,36 @@ class MeasurementModel extends Model
             'giorno'  => $giorno,
             'slot'    => $slot,
         ]);
+    }
+
+    /**
+     * Accetta l'ora scritta a mano: "9:30", "930", "0930", "09.30", "09:30:00".
+     * Restituisce "HH:MM:00" oppure null se non e' un orario valido.
+     */
+    private function normalizzaOra(string $ora): ?string
+    {
+        $ora = str_replace(['.', ' '], [':', ''], trim($ora));
+
+        if ($ora === '') {
+            return null;
+        }
+
+        if (preg_match('/^\d{3,4}$/', $ora) === 1) {
+            $ora = substr($ora, 0, -2) . ':' . substr($ora, -2);
+        }
+
+        if (preg_match('/^(\d{1,2}):(\d{2})(?::\d{2})?$/', $ora, $pezzi) !== 1) {
+            return null;
+        }
+
+        $ore    = (int) $pezzi[1];
+        $minuti = (int) $pezzi[2];
+
+        if ($ore > 23 || $minuti > 59) {
+            return null;
+        }
+
+        return sprintf('%02d:%02d:00', $ore, $minuti);
     }
 
     /**

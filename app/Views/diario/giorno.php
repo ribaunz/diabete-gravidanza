@@ -102,12 +102,10 @@ $badgeStato = [
                                    placeholder="<?= $meta['type'] === 'insulina' ? 'U' : 'mg/dl' ?>"
                                    aria-label="<?= esc($meta['label'], 'attr') ?>">
 
-                            <label class="relative w-28 shrink-0">
-                                <input class="campo campo-nativo w-full min-w-0" type="time" name="ora[<?= esc($slot, 'attr') ?>]"
-                                       value="<?= esc($ora, 'attr') ?>" aria-label="Ora della misurazione"
-                                       oninput="this.setAttribute('value', this.value)">
-                                <span class="segnaposto-sovrapposto">Ora</span>
-                            </label>
+                            <input class="campo w-24 shrink-0 text-center" type="text" inputmode="numeric"
+                                   name="ora[<?= esc($slot, 'attr') ?>]" value="<?= esc($ora, 'attr') ?>"
+                                   maxlength="5" pattern="[0-9]{1,2}:?[0-9]{2}" placeholder="hh:mm"
+                                   aria-label="Ora della misurazione">
                         </div>
 
                         <details class="mt-2" <?= $nota !== '' ? 'open' : '' ?>>
@@ -136,7 +134,7 @@ $badgeStato = [
         </div>
     </section>
 
-    <div class="sticky bottom-16 z-20 -mx-4 border-t border-slate-200 bg-white/95 px-4 py-3 backdrop-blur md:bottom-0">
+    <div class="barra-azioni sticky z-20 -mx-4 border-t border-slate-200 bg-white/95 px-4 py-3 backdrop-blur md:bottom-0">
         <div class="mx-auto flex max-w-6xl items-center justify-between gap-3">
             <a href="<?= site_url('giorno/' . $data . ($mostraTutte ? '' : '?tutte=1')) ?>" class="text-sm text-slate-500 underline">
                 <?= $mostraTutte ? 'Mostra solo glicemie a digiuno, 1 e 2 ore' : 'Mostra anche insulina e glicemie prima dei pasti' ?>

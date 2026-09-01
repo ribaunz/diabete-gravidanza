@@ -30,7 +30,7 @@ $eAttivo       = static fn (array $voce): bool => in_array($primoSegmento, $voce
     <link rel="apple-touch-icon" href="<?= base_url('assets/img/icona.svg') ?>">
     <link rel="stylesheet" href="<?= asset_versionato('assets/css/app.css') ?>">
 </head>
-<body class="min-h-screen pb-20 md:pb-0">
+<body class="min-h-screen pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0">
     <header class="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur">
         <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
             <a href="<?= site_url('oggi') ?>" class="flex items-center gap-2">
@@ -60,7 +60,7 @@ $eAttivo       = static fn (array $voce): bool => in_array($primoSegmento, $voce
     </main>
 
     <nav class="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
-        <div class="grid" style="grid-template-columns: repeat(<?= count($voci) ?>, minmax(0, 1fr));">
+        <div class="grid h-14" style="grid-template-columns: repeat(<?= count($voci) ?>, minmax(0, 1fr));">
             <?php foreach ($voci as $voce): ?>
                 <a href="<?= site_url(ltrim($voce['url'], '/')) ?>"
                    class="flex flex-col items-center gap-0.5 py-2 text-[11px] font-medium <?= $eAttivo($voce) ? 'text-verde-700' : 'text-slate-500' ?>">
