@@ -96,14 +96,14 @@ $badgeStato = [
                         </div>
 
                         <div class="flex gap-2">
-                            <input class="campo flex-1 text-lg font-semibold" type="text" inputmode="decimal"
+                            <input class="campo min-w-0 flex-1 text-lg font-semibold" type="text" inputmode="decimal"
                                    name="valore[<?= esc($slot, 'attr') ?>]"
                                    value="<?= esc(format_value($valore), 'attr') ?>"
                                    placeholder="<?= $meta['type'] === 'insulina' ? 'U' : 'mg/dl' ?>"
                                    aria-label="<?= esc($meta['label'], 'attr') ?>">
 
                             <label class="relative w-28 shrink-0">
-                                <input class="campo campo-nativo w-full" type="time" name="ora[<?= esc($slot, 'attr') ?>]"
+                                <input class="campo campo-nativo w-full min-w-0" type="time" name="ora[<?= esc($slot, 'attr') ?>]"
                                        value="<?= esc($ora, 'attr') ?>" aria-label="Ora della misurazione"
                                        oninput="this.setAttribute('value', this.value)">
                                 <span class="segnaposto-sovrapposto">Ora</span>
